@@ -1,10 +1,10 @@
 'use client'
 
 import { api } from '@/lib/api'
-import { Camera } from 'lucide-react'
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import Cookie from 'js-cookie'
+import { Camera } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 interface Memory {
   id: string
@@ -100,7 +100,7 @@ export function EditMemoryForm() {
   return (
     <form
       onSubmit={handleCreateMemory}
-      className="flex flex-1 flex-col gap-2 p-16"
+      className="flex flex-1 flex-col gap-2 pb-16 pl-16 pr-16"
     >
       <div className="flex items-center gap-4">
         <label
