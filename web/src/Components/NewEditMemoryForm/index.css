@@ -1,0 +1,5 @@
+::-webkit-calendar-picker-indicator {
+  filter: invert(1) sepia(100%) saturate(10000%) hue-rotate(240deg);
+  background-color: transparent;
+  filter: invert(1);
+}

@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma'
-import { request } from 'http'
 
 export async function memoriesRoutes(app: FastifyInstance) {
   app.addHook('preHandler', async (request) => {
@@ -53,9 +52,12 @@ export async function memoriesRoutes(app: FastifyInstance) {
       content: z.string(),
       coverUrl: z.string(),
       isPublic: z.coerce.boolean().default(false),
+      createdAt: z.coerce.date(),
     })
 
-    const { content, coverUrl, isPublic } = bodySchema.parse(request.body)
+    const { content, coverUrl, isPublic, createdAt } = bodySchema.parse(
+      request.body,
+    )
 
     const memory = await prisma.memory.create({
       data: {
@@ -63,6 +65,7 @@ export async function memoriesRoutes(app: FastifyInstance) {
         coverUrl,
         isPublic,
         userId: request.user.sub,
+        createdAt: new Date(createdAt),
       },
     })
 
@@ -80,9 +83,12 @@ export async function memoriesRoutes(app: FastifyInstance) {
       content: z.string(),
       coverUrl: z.string(),
       isPublic: z.coerce.boolean().default(false),
+      createdAt: z.coerce.date(),
     })
 
-    const { content, coverUrl, isPublic } = bodySchema.parse(request.body)
+    const { content, coverUrl, isPublic, createdAt } = bodySchema.parse(
+      request.body,
+    )
 
     let memory = await prisma.memory.findUniqueOrThrow({
       where: {
@@ -102,6 +108,7 @@ export async function memoriesRoutes(app: FastifyInstance) {
         content,
         coverUrl,
         isPublic,
+        createdAt,
       },
     })
 

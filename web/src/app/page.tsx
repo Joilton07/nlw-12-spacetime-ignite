@@ -6,6 +6,7 @@ import ptBr from 'dayjs/locale/pt-br'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { DateStructure } from '@/helper/date-structure'
 
 dayjs.locale(ptBr)
 
@@ -29,8 +30,14 @@ export default async function Home() {
       Authorization: `Bearer ${token}`,
     },
   })
+  const memories: Memory[] = []
 
-  const memories: Memory[] = response.data
+  for (const resp of response.data) {
+    memories.push({
+      ...resp,
+      createdAt: DateStructure(resp.createdAt),
+    })
+  }
 
   if (memories.length === 0) {
     return <EmptyMemories />

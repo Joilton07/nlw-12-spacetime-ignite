@@ -1,14 +1,19 @@
 'use client'
 
 import { api } from '@/lib/api'
-import { Camera } from 'lucide-react'
-import { FormEvent } from 'react'
 import Cookie from 'js-cookie'
-import { MediaPicker } from './MediaPicker'
+import { Camera } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { FormEvent } from 'react'
+import { MediaPicker } from './MediaPicker'
+import './NewEditMemoryForm/index.css'
 
 export function NewMemoryForm() {
   const router = useRouter()
+
+  const date = new Date(Date.now())
+  date.setDate(date.getDate())
+  const dateMaxNow = date.toISOString().slice(0, 10)
 
   async function handleCreateMemory(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -36,6 +41,7 @@ export function NewMemoryForm() {
         coverUrl,
         content: formData.get('content'),
         isPublic: formData.get('isPublic'),
+        createdAt: formData.get('memoryNewDate'),
       },
       {
         headers: {
@@ -52,6 +58,16 @@ export function NewMemoryForm() {
       onSubmit={handleCreateMemory}
       className="flex flex-1 flex-col gap-2 pb-16 pl-16 pr-16"
     >
+      <div className="mb-3 flex items-center gap-2 text-sm text-gray-50 before:h-px before:w-5 before:bg-gray-50">
+        <input
+          type="date"
+          name="memoryNewDate"
+          id="memoryNewDate"
+          max={dateMaxNow}
+          className="border-0 bg-transparent"
+        />
+      </div>
+
       <div className="flex items-center gap-4">
         <label
           htmlFor="media"

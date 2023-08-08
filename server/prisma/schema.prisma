@@ -27,7 +27,7 @@ model Memory {
   coverUrl  String
   content   String
   isPublic  Boolean  @default(false)
-  createdAt DateTime @default(now())
+  createdAt DateTime
 
   user User @relation(fields: [userId], references: [id])
 }

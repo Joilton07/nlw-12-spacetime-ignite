@@ -5,6 +5,8 @@ import Cookie from 'js-cookie'
 import { Camera } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import './NewEditMemoryForm/index.css'
+import { DateStructure } from '@/helper/date-structure'
 
 interface Memory {
   id: string
@@ -26,6 +28,10 @@ export function EditMemoryForm() {
   const [isPublicNew, setIsPublicNew] = useState<boolean>()
   const [coverUrlNew, setCoverUrlNew] = useState('')
 
+  const date = new Date(Date.now())
+  date.setDate(date.getDate())
+  const dateMaxNow = date.toISOString().slice(0, 10)
+
   async function searchIdMemory() {
     const memoryUrl = pathname.split('/')
     setIdMemory(memoryUrl[2])
@@ -42,9 +48,18 @@ export function EditMemoryForm() {
     const memories: Memory = response.data
 
     if (memories) {
-      setMemory(memories)
+      setMemory({
+        ...memories,
+        createdAt: DateStructure(memories.createdAt),
+      })
     }
   }
+
+  useEffect(() => {
+    searchIdMemory()
+  }, [])
+
+  console.log(memory)
 
   async function handleCreateMemory(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -64,12 +79,17 @@ export function EditMemoryForm() {
       coverUrl = uploadResponse.data.fileUrl
     }
 
+    console.log(memory)
+    console.log(formData.get('memoryNewDate'))
+
     await api.put(
       `/memories/${idMemory}`,
       {
         coverUrl: coverUrl || memory?.coverUrl,
         content: contentNew || memory?.content,
         isPublic: isPublicNew || memory?.isPublic,
+        createdAt:
+          new Date(String(formData.get('memoryNewDate'))) || memory?.createdAt,
       },
       {
         headers: {
@@ -93,15 +113,22 @@ export function EditMemoryForm() {
     setCoverUrlNew(previewURL)
   }
 
-  useEffect(() => {
-    searchIdMemory()
-  }, [])
-
   return (
     <form
       onSubmit={handleCreateMemory}
       className="flex flex-1 flex-col gap-2 pb-16 pl-16 pr-16"
     >
+      <div className="mb-3 flex items-center gap-2 text-sm text-gray-50 before:h-px before:w-5 before:bg-gray-50">
+        <input
+          type="date"
+          name="memoryNewDate"
+          id="memoryNewDate"
+          max={dateMaxNow}
+          className="border-0 bg-transparent"
+          defaultValue={memory?.createdAt}
+          placeholder="asdasdad"
+        />
+      </div>
       <div className="flex items-center gap-4">
         <label
           htmlFor="media"
@@ -119,8 +146,8 @@ export function EditMemoryForm() {
             type="checkbox"
             name="isPublic"
             id="isPublic"
-            className="h-4 w-4 rounded border-gray-400 bg-gray-700 text-purple-500"
             defaultChecked={memory?.isPublic}
+            className="h-4 w-4 rounded border-gray-400 bg-gray-700 text-purple-500"
             onChange={(e) => {
               setIsPublicNew(Boolean(e.target.value))
             }}
